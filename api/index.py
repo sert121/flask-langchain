@@ -7,8 +7,10 @@ CORS(app,resources={r"/*": {'origins': '*'}})
 
 @app.route('/test_lang')
 def home():
-    d = lang_init()
-    return d
+    result = lang_init(urls=['https://nike.com'])
+    # use this result to add it to a chatgpt prompt before returning it
+    
+    return result
     # return 'Hello, World!'
 @app.route('/', methods=['GET'])
 def test():

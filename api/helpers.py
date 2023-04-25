@@ -36,13 +36,13 @@ apify = ApifyWrapper()
 
 #     return result["answer"]
 
-def lang_init():
+def lang_init(urls):
     BeautifulSoupWebReader = download_loader("BeautifulSoupWebReader")
 
     loader = BeautifulSoupWebReader()
-    documents = loader.load_data(urls=['https://nike.com'])
-    index = GPTSimpleVectorIndex(documents)
-
+    documents = loader.load_data(urls=urls)
+    index = GPTSimpleVectorIndex.from_documents(documents)
+    print(index)
     tools = [
         Tool(
             name="Website Index",
@@ -56,5 +56,24 @@ def lang_init():
         tools, llm, agent="zero-shot-react-description", memory=memory
     )
 
-    output = agent_chain.run(input="What is Nike about?")
+    output = agent_chain.run(input="What is the Company about? What kind of services does it deal with?")
+    
+    prompt = f'''
+    
+    '''
+
+    system_text = "you are a text-to-SQL translator. You write PostgreSQL code based on plain-language prompts.You should not select columns that are not part of the tables provided to you. "
+    chat_query = [{"role":"system", "content": system_text}, {"role":"user", "content": prompt}]
+    response = openai.ChatCompletion.create(
+        messages=chat_query,
+        model="gpt-3.5-turbo",
+        temperature=0,
+        max_tokens=1000,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        stop=' ;'
+        )
+    # read t
+    
     return output
